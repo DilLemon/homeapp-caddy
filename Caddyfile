@@ -1,0 +1,22 @@
+# Pure HTTP for local LAN, no TLS
+http://home.lan {
+
+  # API to backend on host 192.168.3.43:18000
+  @api path /api* /docs* /openapi.json
+  reverse_proxy @api 192.168.3.43:18000
+
+  # Everything else to frontend on host 192.168.3.43:3000
+  reverse_proxy 192.168.3.43:3000
+
+  # Simple CORS for safety when front calls /api via same domain (usually not needed here)
+  @cors_preflight method OPTIONS
+  handle @cors_preflight {
+    header Access-Control-Allow-Origin "*"
+    header Access-Control-Allow-Methods "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+    header Access-Control-Allow-Headers "*"
+    respond "" 204
+  }
+  header Access-Control-Allow-Origin "*"
+
+  encode zstd gzip
+}

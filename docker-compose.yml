@@ -1,0 +1,11 @@
+version: "3.9"
+
+services:
+  caddy:
+    build: ./
+    image: homeapp-caddy-http:latest
+    container_name: homeapp_caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    # No volumes -> avoids 'file vs directory' mount errors
